@@ -1,15 +1,15 @@
 package hello.core;
 
 import hello.core.discount.DiscountPolicy;
-import hello.core.discount.FixDiscountPolicy;
 import hello.core.discount.RateDiscountPolicy;
-import hello.core.discount.TaxDiscountPolicy;
 import hello.core.member.MemberRepository;
 import hello.core.member.MemberService;
 import hello.core.member.MemberServiceImpl;
 import hello.core.member.MemoryMemberRepositiort;
 import hello.core.order.OrderService;
 import hello.core.order.OrderServiceImpl;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /***
  * 관심사의 분리 예제 ex) 배우는 연기만 기획자는 섭외만
@@ -20,20 +20,28 @@ import hello.core.order.OrderServiceImpl;
  */
 
 //생성한 객체 인스턴스의 참조(레퍼런스)를 "생성자를 통해서 주입" 해준다
+
+@Configuration //설정 정보
 public class AppConfig { // 생성자 주입
 
+    @Bean //메서드가 스프링 컨테이너에 등록 된다.
     public MemberService memberService() {
         return new MemberServiceImpl(memberRepository()); // MemberServiceImpl을 선언하면서 MemoryMemberRespositiory를 사용할 것이다.
     }
 
-    private MemberRepository memberRepository() { //리턴타입은 구체클래스가 아닌 인터페이스를 선택
-        return new MemoryMemberRepositiort();
-    }
-
-    public OrderService orderService() {
+    @Bean
+    public OrderService orderService()
+    {
         return new OrderServiceImpl(memberRepository(), discountPolicy());
     }
 
+    @Bean
+    public MemberRepository memberRepository() { //리턴타입은 구체클래스가 아닌 인터페이스를 선택
+
+        return new MemoryMemberRepositiort();
+    }
+
+    @Bean
     public DiscountPolicy discountPolicy() {
         return new RateDiscountPolicy();
 //      return new FixDiscountPolicy();
