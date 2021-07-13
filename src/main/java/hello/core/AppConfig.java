@@ -24,20 +24,39 @@ import org.springframework.context.annotation.Configuration;
 @Configuration //설정 정보
 public class AppConfig { // 생성자 주입
 
+
+    //@Bean memberService -> new MemoryMemberRepositiory() 호출
+    //@Bean orderService -> new MemoryMemberRepositiory(), new RateDiscountPolicy() 호출
+
+
+    //호출 되는 로직순서(추정)
+    //1.call AppConfig.memberService
+    //2.call AppConfig.memberRepository
+    //3.call AppConfig.memberRepository
+    //4.call AppConfig.orderService
+    //5.call AppConfig.memberRepository
+
+
+    //호출되는 로직순서(결과)
+    //1.call AppConfig.memberService
+    //2.call AppConfig.memberRepository
+    //3.call AppConfig.orderService
+
     @Bean //메서드가 스프링 컨테이너에 등록 된다.
     public MemberService memberService() {
+        System.out.println("call AppConfig.memberService");
         return new MemberServiceImpl(memberRepository()); // MemberServiceImpl을 선언하면서 MemoryMemberRespositiory를 사용할 것이다.
     }
 
     @Bean
-    public OrderService orderService()
-    {
+    public OrderService orderService(){
+        System.out.println("call AppConfig.orderService");
         return new OrderServiceImpl(memberRepository(), discountPolicy());
     }
 
     @Bean
     public MemberRepository memberRepository() { //리턴타입은 구체클래스가 아닌 인터페이스를 선택
-
+        System.out.println("call AppConfig.memberRepository");
         return new MemoryMemberRepositiort();
     }
 
